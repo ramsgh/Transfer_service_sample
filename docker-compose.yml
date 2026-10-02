@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: transfers
+      POSTGRES_USER: transfers
+      POSTGRES_PASSWORD: transfers
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transfers"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/transfers
+      DB_USER: transfers
+      DB_PASSWORD: transfers
+    depends_on:
+      db:
+        condition: service_healthy
